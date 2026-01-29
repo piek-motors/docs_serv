@@ -1,3 +1,6 @@
+mod api;
+mod fs;
+
 use std::{env, net::SocketAddr};
 
 use axum::Router;
@@ -10,7 +13,7 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 #[tokio::main]
 async fn main() {
     let args: Vec<String> = env::args().collect();
-    let doc_path = args
+    let serve_dir = args
         .get(1)
         .expect("path to the public directory is not specified");
 
@@ -25,8 +28,9 @@ async fn main() {
 
     let router = Router::new()
         .route_service("/", ServeFile::new("./dist/index.html"))
-        .nest_service("/browse", ServeDir::new(doc_path))
-        .nest_service("/assets", ServeDir::new("dist/assets"));
+        .nest_service("/browse", ServeDir::new(serve_dir))
+        .nest_service("/assets", ServeDir::new("dist/assets"))
+        .nest("/api", api::router(serve_dir.clone()));
 
     tokio::join!(serve(router, 3000));
 }
