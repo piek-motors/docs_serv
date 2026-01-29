@@ -4,9 +4,11 @@ mod indexing;
 
 use std::{env, net::SocketAddr, path::Path, sync::Arc, time::Duration};
 
-use axum::{Router, routing::get};
+use axum::{Router, http::Method, routing::get};
 use tokio::sync::RwLock;
+use tower::ServiceBuilder;
 use tower_http::{
+    cors::{Any, CorsLayer},
     services::{ServeDir, ServeFile},
     trace::TraceLayer,
 };
@@ -25,6 +27,10 @@ async fn main() {
         .expect("path to the public directory is not specified");
     let root_path = Path::new(serve_dir);
 
+    let cors_layer = CorsLayer::new()
+        .allow_origin(Any) // Open access to selected route
+        .allow_methods(vec![Method::GET]);
+
     tracing_subscriber::registry()
         .with(
             tracing_subscriber::EnvFilter::try_from_default_env().unwrap_or_else(|_| {
@@ -42,11 +48,12 @@ async fn main() {
     rebuild_index_task(state.clone(), Duration::from_mins(1));
 
     let router = Router::new()
-        .route_service("/", ServeFile::new("./dist/index.html"))
         .nest_service("/assets", ServeDir::new("dist/assets"))
         .nest_service("/browse", ServeDir::new(serve_dir))
         .route("/file/{vzis}", get(api::get_file_by_vzis))
         .route("/api/ls", get(api::list_dir))
+        .route_service("/", ServeFile::new("./dist/index.html"))
+        .layer(ServiceBuilder::new().layer(cors_layer))
         .with_state(state);
 
     tokio::join!(serve(router, 3000));

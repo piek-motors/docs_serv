@@ -8,7 +8,7 @@ use std::{
 #[serde(tag = "type")]
 pub enum FsNode {
     File { name: String },
-    Directory { name: String, children: Vec<FsNode> },
+    Dir { name: String, children: Vec<FsNode> },
 }
 
 pub fn read_dir_recursive(path: &Path) -> io::Result<Vec<FsNode>> {
@@ -22,7 +22,7 @@ pub fn read_dir_recursive(path: &Path) -> io::Result<Vec<FsNode>> {
 
         if file_type.is_dir() {
             let children = read_dir_recursive(&entry_path)?;
-            nodes.push(FsNode::Directory { name, children });
+            nodes.push(FsNode::Dir { name, children });
         } else if file_type.is_file() {
             nodes.push(FsNode::File { name });
         }

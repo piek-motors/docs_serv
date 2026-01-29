@@ -1,25 +1,31 @@
 {
-  "name": "docs",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "preview": "vite preview"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.22.0",
-  "devDependencies": {
-    "@preact/preset-vite": "^2.10.3",
-    "@types/node": "^25.1.0",
-    "typescript": "^5.9.3",
-    "vite": "^7.3.1"
-  },
-  "dependencies": {
-    "@mui/joy": "5.0.0-beta.52",
-    "preact": "^10.28.2"
-  }
+	"name": "docs",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc -b && vite build",
+		"preview": "vite preview",
+		"fmt": "pnpm exec biome format --write",
+		"lint": "pnpm exec biome lint --write",
+		"biome": "pnpm exec biome check --write"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"packageManager": "pnpm@10.22.0",
+	"devDependencies": {
+		"@biomejs/biome": "^2.3.13",
+		"@preact/preset-vite": "^2.10.3",
+		"@types/node": "^25.1.0",
+		"typescript": "^5.9.3",
+		"vite": "^7.3.1"
+	},
+	"dependencies": {
+		"@emotion/react": "^11.14.0",
+		"@emotion/styled": "^11.14.1",
+		"@mui/joy": "5.0.0-beta.52",
+		"preact": "^10.28.2"
+	}
 }
