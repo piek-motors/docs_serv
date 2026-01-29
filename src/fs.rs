@@ -1,5 +1,8 @@
 use serde::Serialize;
-use std::{fs, io, path::Path};
+use std::{
+    fs, io,
+    path::{Path, PathBuf},
+};
 
 #[derive(Serialize)]
 #[serde(tag = "type")]
@@ -22,6 +25,35 @@ pub fn read_dir_recursive(path: &Path) -> io::Result<Vec<FsNode>> {
             nodes.push(FsNode::Directory { name, children });
         } else if file_type.is_file() {
             nodes.push(FsNode::File { name });
+        }
+    }
+
+    Ok(nodes)
+}
+
+#[derive(Debug)]
+pub struct FileRef {
+    pub name: String,
+    pub path: PathBuf,
+}
+
+pub fn collect_files_recursive(path: &Path) -> io::Result<Vec<FileRef>> {
+    let mut nodes = Vec::new();
+
+    for entry in fs::read_dir(path)? {
+        let entry = entry?;
+        let file_type = entry.file_type()?;
+        let name = entry.file_name().to_string_lossy().to_string();
+        let entry_path = entry.path();
+
+        if file_type.is_dir() {
+            let files = collect_files_recursive(&entry_path)?;
+            nodes.extend(files);
+        } else if file_type.is_file() {
+            nodes.push(FileRef {
+                name,
+                path: entry_path,
+            });
         }
     }
 

@@ -1,14 +1,21 @@
 mod api;
 mod fs;
+mod indexing;
 
-use std::{env, net::SocketAddr};
+use std::{env, net::SocketAddr, path::Path, sync::Arc, time::Duration};
 
-use axum::Router;
+use axum::{Router, routing::get};
+use tokio::sync::RwLock;
 use tower_http::{
     services::{ServeDir, ServeFile},
     trace::TraceLayer,
 };
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+
+use crate::{
+    api::AppState,
+    indexing::{index_documents, rebuild_index_task},
+};
 
 #[tokio::main]
 async fn main() {
@@ -16,6 +23,7 @@ async fn main() {
     let serve_dir = args
         .get(1)
         .expect("path to the public directory is not specified");
+    let root_path = Path::new(serve_dir);
 
     tracing_subscriber::registry()
         .with(
@@ -26,11 +34,20 @@ async fn main() {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
+    let index = index_documents(&root_path).expect("fail to create index");
+    let state = AppState {
+        root_path: Arc::new(root_path.to_path_buf()),
+        index: Arc::new(RwLock::new(index)),
+    };
+    rebuild_index_task(state.clone(), Duration::from_mins(1));
+
     let router = Router::new()
         .route_service("/", ServeFile::new("./dist/index.html"))
-        .nest_service("/browse", ServeDir::new(serve_dir))
         .nest_service("/assets", ServeDir::new("dist/assets"))
-        .nest("/api", api::router(serve_dir.clone()));
+        .nest_service("/browse", ServeDir::new(serve_dir))
+        .route("/file/{vzis}", get(api::get_file_by_vzis))
+        .route("/api/ls", get(api::list_dir))
+        .with_state(state);
 
     tokio::join!(serve(router, 3000));
 }

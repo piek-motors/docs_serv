@@ -12,3 +12,5 @@ serde = { version = "1.0.228", features = ["derive"] }
 tokio = { version = "1.49.0", features = ["rt-multi-thread", "macros"] }
 tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
 tower-http = { version = "0.6.8", features = ["full"] }
+regex = "1.12.2"
+tokio-util = "0.7.18"
