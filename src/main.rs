@@ -25,6 +25,8 @@ async fn main() {
     let serve_dir = args
         .get(1)
         .expect("path to the public directory is not specified");
+    let port_str = args.get(2).expect("port is not specified");
+    let port: u16 = port_str.parse().expect("invalid port number");
     let root_path = Path::new(serve_dir);
 
     let cors_layer = CorsLayer::new()
@@ -56,7 +58,7 @@ async fn main() {
         .layer(ServiceBuilder::new().layer(cors_layer))
         .with_state(state);
 
-    tokio::join!(serve(router, 3000));
+    tokio::join!(serve(router, port));
 }
 
 async fn serve(app: Router, port: u16) {
