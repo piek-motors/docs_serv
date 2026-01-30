@@ -50,7 +50,7 @@ async fn main() {
         .nest_service("/browse", ServeDir::new(serve_dir))
         .route("/file/{vzis}", get(api::get_file_by_vzis))
         .route("/api/ls", get(api::list_dir))
-        .route_service("/", ServeFile::new("./dist/index.html"))
+        .fallback_service(ServeFile::new("./dist/index.html"))
         .layer(ServiceBuilder::new().layer(cors_layer))
         .with_state(state);
 
