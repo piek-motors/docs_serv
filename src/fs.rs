@@ -3,9 +3,10 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use regex::Regex;
 use serde::Serialize;
 
-use crate::indexing::extract_file_id;
+use crate::indexing::{extract_full_file_id, extract_numeric_file_id};
 
 #[derive(Serialize)]
 #[serde(tag = "type")]
@@ -27,8 +28,21 @@ pub fn read_dir_recursive(path: &Path) -> io::Result<Vec<FsNode>> {
             let children = read_dir_recursive(&entry_path)?;
             nodes.push(FsNode::Dir { name, children });
         } else if file_type.is_file() {
-            let id = extract_file_id(&name);
-            nodes.push(FsNode::File { name, id });
+            let numeric_id_part = extract_numeric_file_id(&name); // e.g., "123.456"
+            let full_id_with_prefix = extract_full_file_id(&name); // e.g., "ВЗИС.123.456"
+
+            let polished_name = match full_id_with_prefix {
+                Some(full_id) => {
+                    let re = Regex::new(&format!(r"^{}[_\-\s]*", regex::escape(&full_id))).unwrap();
+                    re.replace(&name, "").to_string()
+                }
+                None => name.to_string(),
+            };
+
+            nodes.push(FsNode::File {
+                name: polished_name,
+                id: numeric_id_part,
+            });
         }
     }
 

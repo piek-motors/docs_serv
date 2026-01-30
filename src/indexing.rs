@@ -8,11 +8,20 @@ use crate::{
 
 pub type Index = HashMap<String, FileRef>;
 
-/// Extracts the numeric ID from a filename like "ВЗИС.123.456_somefile.pdf"
+/// Extracts only the numeric part of a ВЗИС ID from a filename.
+/// Matches either "123" or "123.456" from "ВЗИС.123_report.pdf" or "ВЗИС.123.456_file.pdf".
+pub fn extract_numeric_file_id(file_name: &str) -> Option<String> {
+    let numeric_re = Regex::new(r"^ВЗИС\.(\d+(?:\.\d+)?)").unwrap();
+    numeric_re
+        .captures(file_name)
+        .map(|caps| caps[1].to_string())
+}
+
+/// Extracts the full ВЗИС ID from a filename, including the prefix, e.g. "ВЗИС.123.456" or "ВЗИС.123".
 /// Returns None if the filename doesn't start with a ВЗИС ID.
-pub fn extract_file_id(file_name: &str) -> Option<String> {
-    let id_re = Regex::new(r"^ВЗИС\.(\d+\.\d+)").unwrap(); // capture only numbers
-    id_re.captures(file_name).map(|caps| caps[1].to_string())
+pub fn extract_full_file_id(file_name: &str) -> Option<String> {
+    let full_re = Regex::new(r"^(ВЗИС\.\d+(?:\.\d+)?)").unwrap();
+    full_re.captures(file_name).map(|caps| caps[1].to_string())
 }
 
 pub fn index_documents(path: &Path) -> Result<Index, Box<dyn Error + Send + Sync>> {
@@ -20,7 +29,7 @@ pub fn index_documents(path: &Path) -> Result<Index, Box<dyn Error + Send + Sync
     let mut index: Index = HashMap::new();
 
     for each in files {
-        let file_id = extract_file_id(&each.name);
+        let file_id = extract_numeric_file_id(&each.name);
         match file_id {
             Some(id) => {
                 index.insert(id, each);
@@ -62,24 +71,27 @@ mod tests {
     #[test]
     fn test_extract_file_id() {
         assert_eq!(
-            extract_file_id("ВЗИС.123.456_report.pdf"),
+            extract_numeric_file_id("ВЗИС.123.456_report.pdf"),
             Some("123.456".to_string())
         );
         assert_eq!(
-            extract_file_id("ВЗИС.123.456 report.pdf"),
+            extract_numeric_file_id("ВЗИС.123_report.pdf"),
+            Some("123".to_string())
+        );
+        assert_eq!(
+            extract_numeric_file_id("ВЗИС.123.456 report.pdf"),
             Some("123.456".to_string())
         );
         assert_eq!(
-            extract_file_id("ВЗИС.987.654_some_file.txt"),
+            extract_numeric_file_id("ВЗИС.987.654_some_file.txt"),
             Some("987.654".to_string())
         );
         assert_eq!(
-            extract_file_id("ВЗИС.1.2-another_file.doc"),
+            extract_numeric_file_id("ВЗИС.1.2-another_file.doc"),
             Some("1.2".to_string())
         );
-        assert_eq!(extract_file_id("report.pdf"), None);
-        assert_eq!(extract_file_id("file_ВЗИС.12.34.pdf"), None);
-        // Epty string → None
-        assert_eq!(extract_file_id(""), None);
+        assert_eq!(extract_numeric_file_id("report.pdf"), None);
+        assert_eq!(extract_numeric_file_id("file_ВЗИС.12.34.pdf"), None);
+        assert_eq!(extract_numeric_file_id(""), None);
     }
 }

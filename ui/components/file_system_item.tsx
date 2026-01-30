@@ -47,8 +47,6 @@ export const FileSystemItem = ({
 	}
 
 	const has_file_id = node.type === 'File' && node.id
-	const name = has_file_id ? node.name.replace(node.id, '').slice(1) : node.name
-
 	return (
 		<Stack direction="row" alignItems="center">
 			<Link
@@ -65,10 +63,10 @@ export const FileSystemItem = ({
 				sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
 			>
 				<img src={icon} width={16} />
-				<P>{name}</P>
+				<P>{node.name}</P>
 				{has_file_id && (
 					<P color="neutral" level="body-xs">
-						({node.id})
+						{node.id}
 					</P>
 				)}
 			</Link>
