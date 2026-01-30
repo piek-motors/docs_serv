@@ -48,19 +48,17 @@ export const FileSystemItem = ({
 
 	const has_file_id = node.type === 'File' && node.id
 	return (
-		<Stack direction="row" alignItems="center">
+		<Stack direction="row" alignItems="center" gap={3}>
 			<Link
 				href={with_base_url(file_url ?? '') || '#'}
 				target={is_directory ? undefined : '_blank'}
 				rel={is_directory ? undefined : 'noopener noreferrer'}
 				onClick={handle_click}
 				style={{
-					flexGrow: 1,
-					cursor: 'pointer',
 					textDecorationColor: 'grey',
 					color: 'inherit',
 				}}
-				sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
+				sx={{ display: 'flex', gap: 1, alignItems: 'center', userSelect: 'text', }}
 			>
 				<img src={icon} width={16} />
 				<P>{node.name}</P>
