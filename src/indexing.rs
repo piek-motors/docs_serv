@@ -8,17 +8,26 @@ use crate::{
 
 pub type Index = HashMap<String, FileRef>;
 
+pub fn extract_file_id(file_name: &str) -> Option<String> {
+    let id_re = Regex::new(r"^(ВЗИС\.\d+\.\d+)").unwrap();
+    if let Some(captures) = id_re.captures(file_name) {
+        let doc_id = captures[1].to_string();
+        return Some(doc_id);
+    }
+    None
+}
+
 pub fn index_documents(path: &Path) -> Result<Index, Box<dyn Error + Send + Sync>> {
     let files = collect_files_recursive(path)?;
     let mut index: Index = HashMap::new();
 
-    let id_re = Regex::new(r"^(ВЗИС\.\d+\.\d+)")?;
-
     for each in files {
-        let name = &each.name;
-        if let Some(captures) = id_re.captures(name) {
-            let doc_id = captures[1].to_string();
-            index.insert(doc_id, each);
+        let file_id = extract_file_id(&each.name);
+        match file_id {
+            Some(id) => {
+                index.insert(id, each);
+            }
+            None => {}
         }
     }
 

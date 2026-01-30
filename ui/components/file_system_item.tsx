@@ -16,9 +16,13 @@ export const FileSystemItem = ({ node, on_click, current_path }: FileSystemItemP
 	const is_directory = node.type === 'Dir'
 	const icon = is_directory ? FolderIcon : FileIcon
 
-	const file_url = is_directory
+	let file_url = is_directory
 		? null
 		: `/browse${current_path}/${node.name}`
+
+	if (node.type === 'File' && node.id) {
+		file_url = `/file/${node.id}`
+	}
 
 	const handle_copy_link = async (e: MouseEvent) => {
 		e.stopPropagation()

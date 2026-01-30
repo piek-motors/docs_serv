@@ -1,13 +1,16 @@
-use serde::Serialize;
 use std::{
     fs, io,
     path::{Path, PathBuf},
 };
 
+use serde::Serialize;
+
+use crate::indexing::extract_file_id;
+
 #[derive(Serialize)]
 #[serde(tag = "type")]
 pub enum FsNode {
-    File { name: String },
+    File { name: String, id: Option<String> },
     Dir { name: String, children: Vec<FsNode> },
 }
 
@@ -24,7 +27,8 @@ pub fn read_dir_recursive(path: &Path) -> io::Result<Vec<FsNode>> {
             let children = read_dir_recursive(&entry_path)?;
             nodes.push(FsNode::Dir { name, children });
         } else if file_type.is_file() {
-            nodes.push(FsNode::File { name });
+            let id = extract_file_id(&name);
+            nodes.push(FsNode::File { name, id });
         }
     }
 

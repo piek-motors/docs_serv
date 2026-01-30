@@ -1,5 +1,5 @@
 export type Node =
-	| { type: 'File'; name: string }
+	| { type: 'File'; name: string, id: string }
 	| { type: 'Dir'; name: string; children: Node[] }
 
 export interface Resp<T> {
