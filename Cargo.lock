@@ -195,7 +195,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "docs"
+name = "docs_serv"
 version = "0.1.0"
 dependencies = [
  "axum",
