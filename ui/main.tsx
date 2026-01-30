@@ -5,21 +5,27 @@ import logoSvg from './assets/logo.svg'
 import { P } from './shortcuts'
 
 const Header = () => (
-    <Stack direction={'row'} gap={2} alignItems={'center'} sx={{ borderBottom: 1, borderColor: 'lightgray' }} justifyContent={'center'}>
-        <a href={'https://piek.ru'}>
-            <img src={logoSvg} width={60} />
-        </a>
-        <P mb={.5}>Документация</P>
-    </Stack>
+	<Stack
+		direction={'row'}
+		gap={2}
+		alignItems={'center'}
+		sx={{ borderBottom: 1, borderColor: 'lightgray' }}
+		justifyContent={'center'}
+	>
+		<a href={'https://piek.ru'}>
+			<img src={logoSvg} width={60} />
+		</a>
+		<P mb={0.5}>Документация</P>
+	</Stack>
 )
 
 const App = () => {
-    return (
-        <Container maxWidth='sm'>
-            <Header />
-            <FileExplorer />
-        </Container>
-    )
+	return (
+		<Container maxWidth="md">
+			<Header />
+			<FileExplorer />
+		</Container>
+	)
 }
 
 render(<App />, document.getElementById('app')!)

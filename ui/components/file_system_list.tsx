@@ -11,12 +11,17 @@ interface FileSystemListProps {
 export const FileSystemList = ({
 	nodes,
 	on_node_click,
-	current_path
+	current_path,
 }: FileSystemListProps) => {
 	return (
-		<Stack gap={1} >
+		<Stack gap={1}>
 			{nodes.map((node, idx) => (
-				<FileSystemItem key={idx} node={node} on_click={on_node_click} current_path={current_path} />
+				<FileSystemItem
+					key={idx}
+					node={node}
+					on_click={on_node_click}
+					current_path={current_path}
+				/>
 			))}
 		</Stack>
 	)

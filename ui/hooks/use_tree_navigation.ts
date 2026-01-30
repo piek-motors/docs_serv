@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'preact/hooks';
-import type { Tree, Node } from '../types';
-import { sort_tree } from '../utils/tree_utils';
+import { useState, useEffect } from 'preact/hooks'
+import type { Tree, Node } from '../types'
+import { sort_tree } from '../utils/tree_utils'
 
 export const use_tree_navigation = (tree: Tree | undefined) => {
 	const [path_stack, set_path_stack] = useState<Node[]>([])
@@ -39,6 +39,6 @@ export const use_tree_navigation = (tree: Tree | undefined) => {
 		path_stack,
 		current_nodes: sort_tree(current_nodes),
 		navigate_to_dir,
-		navigate_to_breadcrumb
+		navigate_to_breadcrumb,
 	}
 }

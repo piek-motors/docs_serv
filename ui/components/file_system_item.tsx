@@ -12,17 +12,19 @@ interface FileSystemItemProps {
 	current_path: string
 }
 
-export const FileSystemItem = ({ node, on_click, current_path }: FileSystemItemProps) => {
+export const FileSystemItem = ({
+	node,
+	on_click,
+	current_path,
+}: FileSystemItemProps) => {
 	const is_directory = node.type === 'Dir'
 	const icon = is_directory ? FolderIcon : FileIcon
 
-	let file_url = is_directory
-		? null
-		: `/browse${current_path}/${node.name}`
-
-	if (node.type === 'File' && node.id) {
-		file_url = `/file/${node.id}`
-	}
+	const file_url = (() => {
+		if (node.type === 'Dir') return null
+		if (node.id) return `/file/${node.id}`
+		return `/browse${current_path}/${node.name}`
+	})()
 
 	const handle_copy_link = async (e: MouseEvent) => {
 		e.stopPropagation()
@@ -44,8 +46,11 @@ export const FileSystemItem = ({ node, on_click, current_path }: FileSystemItemP
 		}
 	}
 
+	const has_file_id = node.type === 'File' && node.id
+	const name = has_file_id ? node.name.replace(node.id, '').slice(1) : node.name
+
 	return (
-		<Stack direction="row" alignItems="center" >
+		<Stack direction="row" alignItems="center">
 			<Link
 				href={with_base_url(file_url ?? '') || '#'}
 				target={is_directory ? undefined : '_blank'}
@@ -54,14 +59,18 @@ export const FileSystemItem = ({ node, on_click, current_path }: FileSystemItemP
 				style={{
 					flexGrow: 1,
 					cursor: 'pointer',
-					textDecorationColor: 'grey'
+					textDecorationColor: 'grey',
+					color: 'inherit',
 				}}
 				sx={{ display: 'flex', gap: 1, alignItems: 'center' }}
 			>
 				<img src={icon} width={16} />
-				<P color='neutral' >
-					{node.name}
-				</P>
+				<P>{name}</P>
+				{has_file_id && (
+					<P color="neutral" level="body-xs">
+						({node.id})
+					</P>
+				)}
 			</Link>
 
 			{!is_directory && (

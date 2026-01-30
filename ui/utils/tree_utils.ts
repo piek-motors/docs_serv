@@ -1,4 +1,4 @@
-import type { Tree } from '../types';
+import type { Tree } from '../types'
 
 export const sort_tree = (tree: Tree): Tree => {
 	return tree.toSorted((a, b) => {
