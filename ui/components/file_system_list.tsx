@@ -1,10 +1,10 @@
 import { Stack } from '@mui/joy'
-import type { Node } from '../types'
+import type { FsNode } from '../types'
 import { FileSystemItem } from './file_system_item'
 
 interface FileSystemListProps {
-	nodes: Node[]
-	on_node_click: (node: Node) => void
+	nodes: FsNode[]
+	on_node_click: (node: FsNode) => void
 	current_path: string
 }
 

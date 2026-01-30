@@ -1,10 +1,10 @@
-export type Node =
+export type FsNode =
 	| { type: 'File'; name: string; id: string }
-	| { type: 'Dir'; name: string; children: Node[] }
+	| { type: 'Dir'; name: string; children: FsNode[] }
 
 export interface Resp<T> {
 	data: T
 	error: string
 }
 
-export type Tree = Node[]
+export type Tree = FsNode[]

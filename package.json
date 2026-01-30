@@ -6,6 +6,7 @@
 	"scripts": {
 		"dev": "vite",
 		"build": "tsc -b && vite build",
+		"typecheck": "tsc -noEmit",
 		"preview": "vite preview",
 		"fmt": "pnpm exec biome format --write",
 		"lint": "pnpm exec biome lint --write",
@@ -27,6 +28,7 @@
 		"@emotion/react": "^11.14.0",
 		"@emotion/styled": "^11.14.1",
 		"@mui/joy": "5.0.0-beta.52",
-		"preact": "^10.28.2"
+		"preact": "^10.28.2",
+		"preact-router": "^4.1.2"
 	}
 }

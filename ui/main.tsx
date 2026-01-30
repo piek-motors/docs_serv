@@ -3,6 +3,7 @@ import { render } from 'preact'
 import { FileExplorer } from './components/file_explorer'
 import logoSvg from './assets/logo.svg'
 import { P } from './shortcuts'
+import Router from 'preact-router'
 
 const Header = () => (
 	<Stack
@@ -15,7 +16,9 @@ const Header = () => (
 		<a href={'https://piek.ru'}>
 			<img src={logoSvg} width={60} />
 		</a>
-		<P mb={0.5}>Документация</P>
+		<a href={'/'} style={{ textDecoration: 'none' }}>
+			<P mb={0.5}>Документация</P>
+		</a>
 	</Stack>
 )
 
@@ -23,7 +26,9 @@ const App = () => {
 	return (
 		<Container maxWidth="md">
 			<Header />
-			<FileExplorer />
+			<Router>
+				<FileExplorer path="/:path*" />
+			</Router>
 		</Container>
 	)
 }

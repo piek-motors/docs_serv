@@ -1,8 +1,8 @@
 import { Breadcrumbs, Link } from '@mui/joy'
-import type { Node } from '../types'
+import type { FsNode } from '../types'
 
 interface NavigationBreadcrumbsProps {
-	path_stack: Node[]
+	path_stack: FsNode[]
 	on_navigate: (index: number) => void
 }
 
@@ -13,10 +13,10 @@ export const NavigationBreadcrumbs = ({
 	return (
 		<Breadcrumbs
 			size="sm"
-			slotProps={{ separator: { sx: { fontSize: '.6rem' } } }}
+			slotProps={{ separator: { sx: { fontSize: '.8rem' } } }}
 		>
 			<Link
-				level="body-xs"
+				level="body-sm"
 				fontWeight={'normal'}
 				component="button"
 				onClick={() => on_navigate(-1)}
@@ -26,12 +26,12 @@ export const NavigationBreadcrumbs = ({
 			</Link>
 			{path_stack.map((node, index) => (
 				<Link
-					level="body-xs"
+					level="body-sm"
 					fontWeight={'normal'}
 					key={index}
 					component="button"
 					onClick={() => on_navigate(index)}
-					color={index === path_stack.length - 1 ? 'neutral' : 'primary'}
+					color={'neutral'}
 				>
 					{node.name}
 				</Link>

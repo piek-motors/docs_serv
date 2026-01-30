@@ -1,14 +1,14 @@
 import { IconButton, Link, Stack } from '@mui/joy'
 import { P } from '../shortcuts'
-import type { Node } from '../types'
+import type { FsNode } from '../types'
 import { with_base_url } from '../hooks/use_tree_data'
 import LinkIcon from '../assets/link_icon.svg'
 import FileIcon from '../assets/file_icon.svg'
 import FolderIcon from '../assets/folder_icon.svg'
 
 interface FileSystemItemProps {
-	node: Node
-	on_click: (node: Node) => void
+	node: FsNode
+	on_click: (node: FsNode) => void
 	current_path: string
 }
 
