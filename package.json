@@ -9,7 +9,8 @@
 		"preview": "vite preview",
 		"fmt": "pnpm exec biome format --write",
 		"lint": "pnpm exec biome lint --write",
-		"biome": "pnpm exec biome check --write"
+		"biome": "pnpm exec biome check --write",
+		"deploy": "sh ./deploy.sh"
 	},
 	"keywords": [],
 	"author": "",

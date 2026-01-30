@@ -8,13 +8,11 @@ use crate::{
 
 pub type Index = HashMap<String, FileRef>;
 
+/// Extracts the numeric ID from a filename like "ВЗИС.123.456_somefile.pdf"
+/// Returns None if the filename doesn't start with a ВЗИС ID.
 pub fn extract_file_id(file_name: &str) -> Option<String> {
-    let id_re = Regex::new(r"^(ВЗИС\.\d+\.\d+)").unwrap();
-    if let Some(captures) = id_re.captures(file_name) {
-        let doc_id = captures[1].to_string();
-        return Some(doc_id);
-    }
-    None
+    let id_re = Regex::new(r"^ВЗИС\.(\d+\.\d+)").unwrap(); // capture only numbers
+    id_re.captures(file_name).map(|caps| caps[1].to_string())
 }
 
 pub fn index_documents(path: &Path) -> Result<Index, Box<dyn Error + Send + Sync>> {
@@ -55,4 +53,33 @@ pub fn rebuild_index_task(state: AppState, reindex_interval: Duration) {
             }
         }
     });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_extract_file_id() {
+        assert_eq!(
+            extract_file_id("ВЗИС.123.456_report.pdf"),
+            Some("123.456".to_string())
+        );
+        assert_eq!(
+            extract_file_id("ВЗИС.123.456 report.pdf"),
+            Some("123.456".to_string())
+        );
+        assert_eq!(
+            extract_file_id("ВЗИС.987.654_some_file.txt"),
+            Some("987.654".to_string())
+        );
+        assert_eq!(
+            extract_file_id("ВЗИС.1.2-another_file.doc"),
+            Some("1.2".to_string())
+        );
+        assert_eq!(extract_file_id("report.pdf"), None);
+        assert_eq!(extract_file_id("file_ВЗИС.12.34.pdf"), None);
+        // Epty string → None
+        assert_eq!(extract_file_id(""), None);
+    }
 }
