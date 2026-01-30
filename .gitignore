@@ -27,3 +27,4 @@ dist-ssr
 docs
 public
 .env.production
+deploy.sh
