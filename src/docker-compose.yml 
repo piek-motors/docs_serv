@@ -1,0 +1,19 @@
+services:
+  docs_serv:
+    image: debian:bookworm-slim
+    container_name: docs_serv
+    restart: always
+    working_dir: /app/docs_serv
+    command: ["/app/docs_serv/target/release/docs_serv", "/docs", "7777"]
+
+    volumes:
+      - ~/apps/docs_serv:/app/docs_serv:ro
+      - /media/sf_docs.piek.ru:/docs:ro
+
+    ports:
+      - "7777:7777"
+
+    tmpfs:
+      - /tmp
+
+    read_only: true
